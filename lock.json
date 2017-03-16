@@ -1,10 +1,10 @@
 {
-    "memo": "613f1f854ac1eda543147c6812f6fa09fdc0544367e5614828aac17d1ee5a220",
+    "memo": "53cc209461b066e5dcf9d1243cbd1225fe14ff44fcf77502e4ea162949043ad3",
     "projects": [
         {
             "name": "cloud.google.com/go",
             "branch": "master",
-            "revision": "65216237311a9cfc641e2ec8188df94c0e05ddf4",
+            "revision": "081f6b13d0132656829110e5f8344a13dfe039dc",
             "packages": [
                 "bigquery",
                 "civil",
@@ -16,9 +16,17 @@
             ]
         },
         {
+            "name": "github.com/MartinSahlen/workerpool",
+            "branch": "master",
+            "revision": "fbaebe0fb625f2175dec20ec2e5b082125af3e54",
+            "packages": [
+                "."
+            ]
+        },
+        {
             "name": "github.com/golang/protobuf",
             "branch": "master",
-            "revision": "69b215d01a5606c843240eab4937eab3acee6530",
+            "revision": "c9c7427a2a70d2eb3bafa0ab2dc163e45f143317",
             "packages": [
                 "proto"
             ]
@@ -26,7 +34,15 @@
         {
             "name": "github.com/googleapis/gax-go",
             "branch": "master",
-            "revision": "da06d194a00e19ce00d9011a13931c3f6f6887c7",
+            "revision": "8c5154c0fe5bf18cf649634d4c6df50897a32751",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/satori/go.uuid",
+            "version": "v1.1.0",
+            "revision": "03612e14496bef24a0d0c0b912407851329b64c7",
             "packages": [
                 "."
             ]
@@ -57,7 +73,7 @@
         {
             "name": "golang.org/x/oauth2",
             "branch": "master",
-            "revision": "b9780ec78894ab900c062d58ee3076cd9b2a4501",
+            "revision": "30fcca6531eb4bb278493c9fb299295b3b145934",
             "packages": [
                 ".",
                 "google",
@@ -69,7 +85,7 @@
         {
             "name": "google.golang.org/api",
             "branch": "master",
-            "revision": "bc20c61134e1d25265dd60049f5735381e79b631",
+            "revision": "650535c7d6201e8304c92f38c922a9a3a36c6877",
             "packages": [
                 "bigquery/v2",
                 "gensupport",
@@ -103,8 +119,8 @@
         },
         {
             "name": "google.golang.org/grpc",
-            "branch": "master",
-            "revision": "d0c32ee6a441117d49856d6120ca9552af413ee0",
+            "version": "v1.0.5",
+            "revision": "708a7f9f3283aa2d4f6132d287d78683babe55c8",
             "packages": [
                 ".",
                 "codes",
