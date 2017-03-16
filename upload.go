@@ -5,10 +5,59 @@ import (
 	"log"
 	"runtime"
 
+	"google.golang.org/api/iterator"
+
 	"cloud.google.com/go/bigquery"
 	"github.com/MartinSahlen/workerpool"
 	uuid "github.com/satori/go.uuid"
 )
+
+type MapRow func(row map[string]bigquery.Value, schema *bigquery.Schema) error
+
+func MapRows(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow) error {
+	for {
+		done, err := mapRows(rows, schema, mapFunc)
+		if done {
+			break
+		} else if err != nil {
+			return err
+		}
+	}
+	return err
+}
+
+func mapRowsAndUpload(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow, uploader UploaderPool) error {
+	for {
+		done, err := mapRows(rows, schema, mapFunc)
+		if done {
+			break
+		} else if err != nil {
+			return err
+		}
+		uploader.AddRow(row)
+	}
+	return nil
+}
+
+func mapRows(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow) (bool, error) {
+	row := map[string]bigquery.Value{}
+	err := rows.Next(&row)
+
+	if err == iterator.Done {
+		break
+	}
+
+	if err != nil {
+		return false, err
+	}
+
+	err = mapFunc(row, schema)
+
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
 
 //UploadWrapper wraps a row for uploading through the ValueSaver interface
 type UploadWrapper struct {
@@ -62,4 +111,10 @@ func (u uploadRowTask) Execute() {
 		}
 		log.Println(err.Error())
 	}
+}
+
+func UploadRows(table *bigquery.Table, schema *bigquery.Schema, rows *bigquery.RowIterator, mapFunc MapRow, buffer uint64) {
+	uploader := NewUploaderPool(table.Uploader(), buffer)
+	mapRowsAndUpload(rows, schema, mapFunc, uploader)
+	uploader.Wait()
 }

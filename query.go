@@ -5,30 +5,9 @@ import (
 	"errors"
 
 	"cloud.google.com/go/bigquery"
-	"google.golang.org/api/iterator"
 
 	bigqueryV2 "google.golang.org/api/bigquery/v2"
 )
-
-type MapRow func(row map[string]bigquery.Value, schema *bigquery.Schema) error
-
-func MapRows(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow) error {
-	for {
-		row := map[string]bigquery.Value{}
-		err := rows.Next(&row)
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return err
-		}
-		err = mapFunc(row, schema)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
 func startJob(project, query string) (*bigquery.Job, error) {
 	c, err := client(project)
