@@ -1,0 +1,15 @@
+package: github.com/MartinSahlen/bq-utils
+import:
+- package: cloud.google.com/go
+  version: ^0.7.0
+  subpackages:
+  - bigquery
+- package: github.com/tealeg/xlsx
+  version: ^0.4.0
+- package: golang.org/x/oauth2
+  subpackages:
+  - google
+- package: google.golang.org/api
+  subpackages:
+  - bigquery/v2
+  - iterator
