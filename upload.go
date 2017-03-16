@@ -33,8 +33,8 @@ func NewUploaderPool(uploader *bigquery.Uploader, buffer uint64) UploaderPool {
 	}
 }
 
-func (u UploaderPool) AddRow(row UploadWrapper) {
-	u.pool.Exec(uploadRowTask{Row: row, Uploader: u.uploader})
+func (u UploaderPool) AddRow(row map[string]bigquery.Value) {
+	u.pool.Exec(uploadRowTask{Row: UploadWrapper{Row: row}, Uploader: u.uploader})
 }
 
 func (u UploaderPool) Wait() {
