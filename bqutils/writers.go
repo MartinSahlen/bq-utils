@@ -12,7 +12,7 @@ func QueryToCsv(project, query, filename string) error {
 
 func TableToCsv(project, tablename, filename string) error {
 
-	table, dataset, err := ParseTableName(tablename)
+	dataset, table, err := ParseTableName(tablename)
 
 	if err != nil {
 		return err
@@ -27,11 +27,45 @@ func TableToCsv(project, tablename, filename string) error {
 	return WriteCsvFile(filename, tableData.Rows, tableData.Schema)
 }
 
-func QueriesToExcel(project string, queries []string, filename string) error {
-
-	return nil
+type ExcelWriterConfig struct {
+	IsQuery   bool
+	Project   string
+	Query     *string
+	Table     *string
+	SheetName string
 }
 
-func TablesToExcel(project string, tables []string, filename string) error {
-	return nil
+func (e ExcelWriterConfig) Exeute() (*RowData, error) {
+	if e.IsQuery {
+		return GetQueryData(e.Project, *e.Query)
+	}
+
+	dataset, table, err := ParseTableName(*e.Table)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return GetTableData(e.Project, *dataset, *table)
+}
+
+func WriteToExcel(project string, ss []ExcelWriterConfig, filename string) error {
+
+	sheets := []SheetConfig{}
+
+	for _, s := range ss {
+		rowData, err := s.Exeute()
+
+		if err != nil {
+			return err
+		}
+
+		sheets = append(sheets, SheetConfig{
+			SheetName: s.SheetName,
+			Schema:    rowData.Schema,
+			Rows:      rowData.Rows,
+		})
+
+	}
+	return WriteExcelFile(filename, sheets)
 }

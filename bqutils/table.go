@@ -112,6 +112,7 @@ func GetTableMeta(project, dataset, table string) (*bigquery.TableMetadata, erro
 }
 
 func GetTableData(project, dataset, table string) (*RowData, error) {
+
 	rows, err := GetTableRows(project, dataset, table)
 
 	if err != nil {

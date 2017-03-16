@@ -1,8 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"os"
 
+	"github.com/MartinSahlen/bq-utils/bqutils"
 	"github.com/docopt/docopt-go"
 )
 
@@ -12,15 +14,52 @@ func main() {
 Usage:
   bq-utils csv query <csv-query> <output-file>
   bq-utils csv table <csv-table> <output-file>
-  bq-utils excel query <output-file> (<query> <sheetname>)...
-  bq-utils excel table <output-file> (<table> <sheetname>)...
-  bq-utils excel mixed <output-file> (<table>|<query> <sheetname>)...
+  bq-utils excel query <output-file> (<excel-query> <sheetname>)...
+  bq-utils excel table <output-file> (<excel-table> <sheetname>)...
+  bq-utils excel mixed <output-file> (q <excel-query> <query-sheetname>)|(t <excel-table> <table-sheetname>)...
 
 Options:
   -h --help     Show this screen.
   --version     Show version.`
 
+	project := os.Getenv("PROJECT")
+
+	if project == "" {
+		panic("PROJECT env var is not set")
+	}
+
 	arguments, _ := docopt.Parse(usage, nil, true, "BigQuery Utilities 0.0 Pre-Alpha", false)
 
-	fmt.Println(arguments)
+	log.Println(arguments)
+
+	csv := arguments["csv"].(bool)
+	excel := arguments["excel"].(bool)
+	query := arguments["query"].(bool)
+	table := arguments["table"].(bool)
+	mixed := arguments["mixed"].(bool)
+	filename := arguments["<output-file>"].(string)
+
+	if csv {
+		if query {
+			q := arguments["<csv-query>"].(string)
+			err := bqutils.QueryToCsv(project, q, filename)
+			if err != nil {
+				panic(err)
+			}
+		} else if table {
+			t := arguments["<csv-table>"].(string)
+			err := bqutils.TableToCsv(project, t, filename)
+			if err != nil {
+				panic(err)
+			}
+		}
+	} else if excel {
+		if query {
+
+		} else if table {
+
+		} else if mixed {
+
+		}
+	}
 }
