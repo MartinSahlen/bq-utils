@@ -30,17 +30,17 @@ func TableToCsv(project, tablename, filename string) error {
 type ExcelWriterConfig struct {
 	IsQuery   bool
 	Project   string
-	Query     *string
-	Table     *string
+	Query     string
+	Table     string
 	SheetName string
 }
 
 func (e ExcelWriterConfig) Exeute() (*RowData, error) {
 	if e.IsQuery {
-		return GetQueryData(e.Project, *e.Query)
+		return GetQueryData(e.Project, e.Query)
 	}
 
-	dataset, table, err := ParseTableName(*e.Table)
+	dataset, table, err := ParseTableName(e.Table)
 
 	if err != nil {
 		return nil, err
@@ -65,7 +65,6 @@ func WriteToExcel(project string, ss []ExcelWriterConfig, filename string) error
 			Schema:    rowData.Schema,
 			Rows:      rowData.Rows,
 		})
-
 	}
 	return WriteExcelFile(filename, sheets)
 }

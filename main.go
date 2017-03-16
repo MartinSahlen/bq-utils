@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/MartinSahlen/bq-utils/bqutils"
@@ -28,6 +29,8 @@ Options:
 	}
 
 	arguments, _ := docopt.Parse(usage, nil, true, "BigQuery Utilities 0.0 Pre-Alpha", false)
+
+	log.Println(arguments)
 
 	csv := arguments["csv"].(bool)
 	excel := arguments["excel"].(bool)
@@ -57,11 +60,12 @@ Options:
 			for i, q := range arguments["<excel-query>"].([]string) {
 				es = append(es, bqutils.ExcelWriterConfig{
 					SheetName: sheets[i],
-					Query:     &q,
+					Query:     q,
 					IsQuery:   true,
 					Project:   project,
 				})
 			}
+
 			err := bqutils.WriteToExcel(project, es, filename)
 			if err != nil {
 				panic(err)
