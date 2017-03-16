@@ -36,11 +36,11 @@ func WriteExcelFile(filename string, sheets []SheetConfig) error {
 
 		writeExcelRow(header, sheet)
 
-		mapper := func(row map[string]bigquery.Value, schema *bigquery.Schema) error {
+		mapper := func(row map[string]bigquery.Value, schema *bigquery.Schema) (map[string]bigquery.Value, error) {
 			if schema == nil {
-				return errors.New("Schema is nil")
+				return nil, errors.New("Schema is nil")
 			}
-			return writeExcelRow(mapToStringSlice(row, *schema), sheet)
+			return nil, writeExcelRow(mapToStringSlice(row, *schema), sheet)
 		}
 
 		err = MapRows(s.Rows, &s.Schema, mapper)
@@ -72,12 +72,12 @@ func WriteCsvFile(fileName string, rows *bigquery.RowIterator, schema bigquery.S
 
 	fmt.Fprintln(w, strings.Join(header, ","))
 
-	mapper := func(row map[string]bigquery.Value, schema *bigquery.Schema) error {
+	mapper := func(row map[string]bigquery.Value, schema *bigquery.Schema) (map[string]bigquery.Value, error) {
 		if schema == nil {
-			return errors.New("Schema is nil")
+			return nil, errors.New("Schema is nil")
 		}
 		_, err := fmt.Fprintln(w, strings.Join(mapToStringSlice(row, *schema), ","))
-		return err
+		return nil, err
 	}
 
 	MapRows(rows, &schema, mapper)

@@ -12,23 +12,23 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-type MapRow func(row map[string]bigquery.Value, schema *bigquery.Schema) error
+type MapRow func(row map[string]bigquery.Value, schema *bigquery.Schema) (map[string]bigquery.Value, error)
 
 func MapRows(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow) error {
 	for {
-		done, err := mapRows(rows, schema, mapFunc)
+		_, done, err := mapRows(rows, schema, mapFunc)
 		if done {
 			break
 		} else if err != nil {
 			return err
 		}
 	}
-	return err
+	return nil
 }
 
 func mapRowsAndUpload(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow, uploader UploaderPool) error {
 	for {
-		done, err := mapRows(rows, schema, mapFunc)
+		row, done, err := mapRows(rows, schema, mapFunc)
 		if done {
 			break
 		} else if err != nil {
@@ -39,24 +39,24 @@ func mapRowsAndUpload(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFu
 	return nil
 }
 
-func mapRows(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow) (bool, error) {
+func mapRows(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow) (map[string]bigquery.Value, bool, error) {
 	row := map[string]bigquery.Value{}
 	err := rows.Next(&row)
 
 	if err == iterator.Done {
-		break
+		return nil, true, nil
 	}
 
 	if err != nil {
-		return false, err
+		return nil, false, err
 	}
 
-	err = mapFunc(row, schema)
+	row, err = mapFunc(row, schema)
 
 	if err != nil {
-		return false, err
+		return row, false, err
 	}
-	return true, nil
+	return row, false, nil
 }
 
 //UploadWrapper wraps a row for uploading through the ValueSaver interface
