@@ -110,3 +110,29 @@ func GetTableMeta(project, dataset, table string) (*bigquery.TableMetadata, erro
 
 	return client.Dataset(dataset).Table(table).Metadata(context.Background())
 }
+
+func GetTableData(project, dataset, table string) (*RowData, error) {
+	rows, err := GetTableRows(project, dataset, table)
+
+	if err != nil {
+		return nil, err
+	}
+
+	numRows, err := GetNumRowsForTable(project, dataset, table)
+
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := GetTableMeta(project, dataset, table)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &RowData{
+		Rows:    rows,
+		NumRows: numRows,
+		Schema:  meta.Schema,
+	}, nil
+}

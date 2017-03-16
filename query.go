@@ -126,3 +126,37 @@ func RunQuery(project, query string) (*bigquery.RowIterator, *bigquery.Job, erro
 	rows, err := job.Read(ctx)
 	return rows, job, err
 }
+
+func GetQueryData(project, query string) (*RowData, error) {
+	ctx := context.Background()
+
+	_, job, err := RunQuery(project, query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := job.Read(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	numRows, err := GetNumRowsForJob(project, job.ID())
+
+	if err != nil {
+		return nil, err
+	}
+
+	schema, err := GetQuerySchema(project, job.ID())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &RowData{
+		Rows:    rows,
+		NumRows: numRows,
+		Schema:  schema,
+	}, nil
+}

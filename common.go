@@ -19,3 +19,9 @@ func v2Client() (*bigqueryV2.Service, error) {
 	}
 	return bigqueryV2.New(httpClient)
 }
+
+type RowData struct {
+	Rows    *bigquery.RowIterator
+	NumRows uint64
+	Schema  bigquery.Schema
+}
