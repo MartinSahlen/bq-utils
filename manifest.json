@@ -1,0 +1,16 @@
+{
+    "dependencies": {
+        "cloud.google.com/go": {
+            "branch": "master"
+        },
+        "github.com/tealeg/xlsx": {
+            "branch": "master"
+        },
+        "golang.org/x/oauth2": {
+            "branch": "master"
+        },
+        "google.golang.org/api": {
+            "branch": "master"
+        }
+    }
+}

@@ -1,0 +1,124 @@
+{
+    "memo": "613f1f854ac1eda543147c6812f6fa09fdc0544367e5614828aac17d1ee5a220",
+    "projects": [
+        {
+            "name": "cloud.google.com/go",
+            "branch": "master",
+            "revision": "65216237311a9cfc641e2ec8188df94c0e05ddf4",
+            "packages": [
+                "bigquery",
+                "civil",
+                "compute/metadata",
+                "internal",
+                "internal/atomiccache",
+                "internal/fields",
+                "internal/optional"
+            ]
+        },
+        {
+            "name": "github.com/golang/protobuf",
+            "branch": "master",
+            "revision": "69b215d01a5606c843240eab4937eab3acee6530",
+            "packages": [
+                "proto"
+            ]
+        },
+        {
+            "name": "github.com/googleapis/gax-go",
+            "branch": "master",
+            "revision": "da06d194a00e19ce00d9011a13931c3f6f6887c7",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/tealeg/xlsx",
+            "branch": "master",
+            "revision": "47e33bbbedd12ad4f29abb9e7e894b3a1969c0fc",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "golang.org/x/net",
+            "branch": "master",
+            "revision": "a6577fac2d73be281a500b310739095313165611",
+            "packages": [
+                "context",
+                "context/ctxhttp",
+                "http2",
+                "http2/hpack",
+                "idna",
+                "internal/timeseries",
+                "lex/httplex",
+                "trace"
+            ]
+        },
+        {
+            "name": "golang.org/x/oauth2",
+            "branch": "master",
+            "revision": "b9780ec78894ab900c062d58ee3076cd9b2a4501",
+            "packages": [
+                ".",
+                "google",
+                "internal",
+                "jws",
+                "jwt"
+            ]
+        },
+        {
+            "name": "google.golang.org/api",
+            "branch": "master",
+            "revision": "bc20c61134e1d25265dd60049f5735381e79b631",
+            "packages": [
+                "bigquery/v2",
+                "gensupport",
+                "googleapi",
+                "googleapi/internal/uritemplates",
+                "googleapi/transport",
+                "internal",
+                "iterator",
+                "option",
+                "transport"
+            ]
+        },
+        {
+            "name": "google.golang.org/appengine",
+            "version": "v1.0.0",
+            "revision": "150dc57a1b433e64154302bdc40b6bb8aefa313a",
+            "packages": [
+                ".",
+                "internal",
+                "internal/app_identity",
+                "internal/base",
+                "internal/datastore",
+                "internal/log",
+                "internal/modules",
+                "internal/remote_api",
+                "internal/socket",
+                "internal/urlfetch",
+                "socket",
+                "urlfetch"
+            ]
+        },
+        {
+            "name": "google.golang.org/grpc",
+            "branch": "master",
+            "revision": "d0c32ee6a441117d49856d6120ca9552af413ee0",
+            "packages": [
+                ".",
+                "codes",
+                "credentials",
+                "credentials/oauth",
+                "grpclog",
+                "internal",
+                "metadata",
+                "naming",
+                "peer",
+                "stats",
+                "tap",
+                "transport"
+            ]
+        }
+    ]
+}
