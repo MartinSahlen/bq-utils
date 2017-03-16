@@ -5,26 +5,10 @@ import (
 	"log"
 	"runtime"
 
-	"google.golang.org/api/iterator"
-
 	"cloud.google.com/go/bigquery"
 	"github.com/MartinSahlen/workerpool"
 	uuid "github.com/satori/go.uuid"
 )
-
-type MapRow func(row map[string]bigquery.Value, schema *bigquery.Schema) (map[string]bigquery.Value, error)
-
-func MapRows(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow) error {
-	for {
-		_, done, err := mapRows(rows, schema, mapFunc)
-		if done {
-			break
-		} else if err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
 func mapRowsAndUpload(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow, uploader UploaderPool) error {
 	for {
@@ -37,26 +21,6 @@ func mapRowsAndUpload(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFu
 		uploader.AddRow(row)
 	}
 	return nil
-}
-
-func mapRows(rows *bigquery.RowIterator, schema *bigquery.Schema, mapFunc MapRow) (map[string]bigquery.Value, bool, error) {
-	row := map[string]bigquery.Value{}
-	err := rows.Next(&row)
-
-	if err == iterator.Done {
-		return nil, true, nil
-	}
-
-	if err != nil {
-		return nil, false, err
-	}
-
-	row, err = mapFunc(row, schema)
-
-	if err != nil {
-		return row, false, err
-	}
-	return row, false, nil
 }
 
 //UploadWrapper wraps a row for uploading through the ValueSaver interface

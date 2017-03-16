@@ -2,6 +2,8 @@ package bqutils
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"cloud.google.com/go/bigquery"
 	"golang.org/x/oauth2/google"
@@ -24,4 +26,12 @@ type RowData struct {
 	Rows    *bigquery.RowIterator
 	NumRows uint64
 	Schema  bigquery.Schema
+}
+
+func mapToStringSlice(row map[string]bigquery.Value, schema bigquery.Schema) []string {
+	outputRow := []string{}
+	for _, f := range schema {
+		outputRow = append(outputRow, strings.TrimSpace(fmt.Sprint(row[f.Name])))
+	}
+	return outputRow
 }
