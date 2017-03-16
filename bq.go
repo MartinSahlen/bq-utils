@@ -56,7 +56,13 @@ func CreateTable(project, dataset, table string, schema bigquery.Schema, force b
 	err = client.Dataset(dataset).Table(table).Create(ctx, schema, bigquery.UseStandardSQL())
 
 	if err != nil {
-		if force {
+		errString := err.Error()
+
+		if strings.Contains(errString, "Error 400") {
+			return nil, err
+		}
+
+		if force && strings.Contains(errString, "Error 409") {
 			err = client.Dataset(dataset).Table(table).Delete(ctx)
 
 			if err != nil {
