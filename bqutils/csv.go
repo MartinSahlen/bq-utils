@@ -40,3 +40,30 @@ func WriteCsvFile(filename string, rows *bigquery.RowIterator, schema bigquery.S
 
 	return w.Flush()
 }
+
+func TableToCsv(project, tablename, filename string) error {
+
+	dataset, table, err := ParseTableName(tablename)
+
+	if err != nil {
+		return err
+	}
+
+	tableData, err := GetTableData(project, *dataset, *table)
+
+	if err != nil {
+		return err
+	}
+
+	return WriteCsvFile(filename, tableData.Rows, tableData.Schema)
+}
+
+func QueryToCsv(project, query, filename string) error {
+	queryData, err := GetQueryData(project, query)
+
+	if err != nil {
+		return err
+	}
+
+	return WriteCsvFile(filename, queryData.Rows, queryData.Schema)
+}

@@ -63,3 +63,69 @@ func writeExcelRow(row []string, sheet *xlsx.Sheet) error {
 	}
 	return nil
 }
+
+//StitchSheetNames : Since we get two arrays for queries and their corresponding sheet names,
+//We need to "stitch" them together. Docopt guarantees that this will not blast
+//Because the slices will have the same length
+func StitchSheetNames(queriesOrTables, sheetNames []string, project string, isQuery bool) []ExcelWriterConfig {
+	writeConfigs := []ExcelWriterConfig{}
+
+	for i, queryOrTable := range queriesOrTables {
+
+		writeConfig := ExcelWriterConfig{
+			SheetName: sheetNames[i],
+			IsQuery:   true,
+			Project:   project,
+		}
+
+		if isQuery {
+			writeConfig.Query = queryOrTable
+		} else {
+			writeConfig.Table = queryOrTable
+		}
+		writeConfigs = append(writeConfigs, writeConfig)
+	}
+	return writeConfigs
+}
+
+type ExcelWriterConfig struct {
+	IsQuery   bool
+	Project   string
+	Query     string
+	Table     string
+	SheetName string
+}
+
+func (e ExcelWriterConfig) Exeute() (*RowData, error) {
+	if e.IsQuery {
+		return GetQueryData(e.Project, e.Query)
+	}
+
+	dataset, table, err := ParseTableName(e.Table)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return GetTableData(e.Project, *dataset, *table)
+}
+
+func WriteToExcel(project string, ss []ExcelWriterConfig, filename string) error {
+
+	sheets := []SheetConfig{}
+
+	for _, s := range ss {
+		rowData, err := s.Exeute()
+
+		if err != nil {
+			return err
+		}
+
+		sheets = append(sheets, SheetConfig{
+			SheetName: s.SheetName,
+			Schema:    rowData.Schema,
+			Rows:      rowData.Rows,
+		})
+	}
+	return WriteExcelFile(filename, sheets)
+}

@@ -21,7 +21,6 @@ Options:
 	-n --ndjson                   Use Newline delimited JSON as output for the writer
 	-e --excel                    Use Excel as the output for the writer
 	-o file --output=file         The path of the output file, i.e ~/Desktop/file.csv
-	-l --legacy										Use legacy SQL for the queries
   -v --version                  Show version`
 
 	arguments, err := docopt.Parse(usage, nil, true, "BigQuery Utilities 0.0 Pre-Alpha", false)
@@ -38,21 +37,20 @@ Options:
 }
 
 func run(arguments map[string]interface{}) error {
+
+	//Extract the arguments from the docopt parser
+	//Docopt guarantees that this will work
 	csv := arguments["--csv"].(bool)
 	excel := arguments["--excel"].(bool)
 	ndjson := arguments["--ndjson"].(bool)
-	//useLegacySQL := arguments["--legacysql"].(bool)
-
 	filename := arguments["--output"].(string)
 	project := arguments["--project"].(string)
-
 	queries := arguments["--query"].([]string)
 	querySheetNames := arguments["<query-sheet-name>"].([]string)
 	tables := arguments["--table"].([]string)
 	tableSheetNames := arguments["<table-sheet-name>"].([]string)
 
 	//Docopt should make sure that the below combinations are the only legal ones.
-
 	if csv && len(queries) == 1 {
 		return bqutils.QueryToCsv(project, queries[0], filename)
 	}
@@ -70,27 +68,9 @@ func run(arguments map[string]interface{}) error {
 	}
 
 	if excel {
-		writeConfigs := []bqutils.ExcelWriterConfig{}
-
-		//We just be puttin' them queries first in the sheets
-		for i, q := range queries {
-			writeConfigs = append(writeConfigs, bqutils.ExcelWriterConfig{
-				SheetName: querySheetNames[i],
-				Query:     q,
-				IsQuery:   true,
-				Project:   project,
-			})
-		}
-
-		for i, t := range tables {
-			writeConfigs = append(writeConfigs, bqutils.ExcelWriterConfig{
-				SheetName: tableSheetNames[i],
-				Table:     t,
-				IsQuery:   false,
-				Project:   project,
-			})
-		}
-		return bqutils.WriteToExcel(project, writeConfigs, filename)
+		q := bqutils.StitchSheetNames(queries, querySheetNames, project, true)
+		t := bqutils.StitchSheetNames(tables, tableSheetNames, project, false)
+		return bqutils.WriteToExcel(project, append(q, t...), filename)
 	}
 	return nil
 }

@@ -31,3 +31,13 @@ func WriteNdJSONFile(filename string, rows *bigquery.RowIterator) error {
 
 	return w.Flush()
 }
+
+func QueryToNdJSON(project, query, filename string) error {
+	queryData, err := GetQueryData(project, query)
+
+	if err != nil {
+		return err
+	}
+
+	return WriteNdJSONFile(filename, queryData.Rows)
+}
