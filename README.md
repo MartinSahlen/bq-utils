@@ -25,29 +25,8 @@ data to play around with in a frontend or some other analytics tool like a graph
 - It will BLAST (probably) if the provided project is not the one you are currently authenticated against.
 
 ## Usage
-Since we are using [docopt](https://github.com/docopt/docopt.go), I'm just pasting the Usage doc for that.
 
-```
-BigQuery Utilities
-
-Usage:
-bq-utils --project=<project> (--csv|--ndjson) --output=<file> (--query=<query>|--table=<table>)
-bq-utils --project=<project> --excel --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
-
-Options:
--h --help                     Show this screen
--p project --project=project  The GCP project you are working with.
--q query --query=query        The query to use as input to the csv writer
--t table --table=table        The table to use as input to the csv writer
--c --csv                      Use CSV as output for the writer
--n --ndjson                   Use Newline delimited JSON as output for the writer
--e --excel                    Use Excel as the output for the writer
--o file --output=file         The path of the output file, i.e ~/Desktop/file.csv
--v --version                  Show version
-```
-
-# NB!
-In the examples, I have not included the backticks around bigquery table names because
+**NB!** In the examples, I have not included the backticks around bigquery table names because
 they ruined the markdown formatting.
 
 #### Exporting a table to CSV
