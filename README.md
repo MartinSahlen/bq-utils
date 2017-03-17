@@ -59,19 +59,19 @@ they ruined the markdown formatting.
 #### Exporting a complex query to CSV
 In some cases, we might have complex queries that would be bad to write out in the CLI. Currently I haven't bothered to support anything here, it can be solved pretty easily like this:
 
-`bq-utils -p my-project -o file.xlsx -c -q "$(cat query.sql)"`
+`bq-utils -p my-project -o file.csv -c -q "$(cat query.sql)"`
 
 #### Exporting a table to NDJSON
-`bq-utils -p my-project -o file.csv -n -t dataset.table`
+`bq-utils -p my-project -o file.ndjson -n -t dataset.table`
 
 #### Exporting a query to NDJSON
-`bq-utils -p my-project -o file.csv -n -q 'SELECT * FROM dataset.table'`
+`bq-utils -p my-project -o file.ndjson -n -q 'SELECT * FROM dataset.table'`
 
 #### Exporting a complex query to NDJSON
-`bq-utils -p my-project -o file.xlsx -n -q "$(cat query.sql)"`
+`bq-utils -p my-project -o file.ndjson -n -q "$(cat query.sql)"`
 
 #### Exporting a table to Excel
-`bq-utils -p my-project -o file.xlsx -e -t dataset.table`
+`bq-utils -p my-project -o file.xslx -e -t dataset.table`
 
 #### Exporting a query to Excel
 `bq-utils -p my-project -o file.xslx -e -q 'SELECT * FROM dataset.table'`
@@ -80,6 +80,10 @@ In some cases, we might have complex queries that would be bad to write out in t
 `bq-utils -p my-project -o file.csv -e -q "$(cat query.sql)"`
 
 ### Exporting a mix of queries and tables to Excel
+
+When exporting to Excel, remember to include the sheet name
+(even though you only have one sheet)
+
 `bq-utils -p my-project -o file.csv -e -q "$(cat query.sql)" complex-query-sheet -q 'SELECT * FROM dataset.table' query-sheet -t dataset.table table-1-sheet`
 
 ## Roadmap
