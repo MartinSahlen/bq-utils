@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/MartinSahlen/bq-utils/bqutils"
 	"github.com/docopt/docopt-go"
 )
@@ -28,14 +26,10 @@ Options:
 
 	arguments, err := docopt.Parse(usage, nil, true, "BigQuery Utilities 0.0 Pre-Alpha", false)
 
-	sheet, err := bqutils.CreateSheet("my-shit")
-
 	if err != nil {
 		panic(err)
 	}
 
-	log.Println(*sheet)
-	return
 	err = run(arguments)
 
 	if err != nil {
@@ -79,14 +73,14 @@ func run(arguments map[string]interface{}) error {
 		//Puttin' them queries first
 		q := bqutils.StitchSheetNames(queries, querySheetNames, project, true)
 		t := bqutils.StitchSheetNames(tables, tableSheetNames, project, false)
-		return bqutils.WriteToExcel(project, append(q, t...), filename)
+		return bqutils.WriteToExcel(append(q, t...), filename)
 	}
 
 	if googleSheet {
 		//Puttin' them queries first
 		q := bqutils.StitchSheetNames(queries, querySheetNames, project, true)
 		t := bqutils.StitchSheetNames(tables, tableSheetNames, project, false)
-		return bqutils.WriteToExcel(project, append(q, t...), filename)
+		return bqutils.CreateGoogleSheet(append(q, t...), filename)
 	}
 	return nil
 }

@@ -42,7 +42,8 @@ func WriteExcelFile(filename string, sheets []SheetConfig) error {
 			if schema == nil {
 				return nil, errors.New("Schema is nil")
 			}
-			return nil, writeExcelRow(mapToStringSlice(row, *schema), sheet)
+			writeExcelRow(mapToStringSlice(row, *schema), sheet)
+			return nil, nil
 		}
 
 		err = MapRows(s.Rows, &s.Schema, mapper)
@@ -66,24 +67,23 @@ func WriteExcelFile(filename string, sheets []SheetConfig) error {
 	return nil
 }
 
-func writeExcelRow(row []string, sheet *xlsx.Sheet) error {
+func writeExcelRow(row []string, sheet *xlsx.Sheet) {
 	r := sheet.AddRow()
 	for _, cell := range row {
 		c := r.AddCell()
 		c.Value = cell
 	}
-	return nil
 }
 
 //StitchSheetNames : Since we get two arrays for queries and their corresponding sheet names,
 //We need to "stitch" them together. Docopt guarantees that this will not blast
 //Because the slices will have the same length
-func StitchSheetNames(queriesOrTables, sheetNames []string, project string, isQuery bool) []ExcelWriterConfig {
-	writeConfigs := []ExcelWriterConfig{}
+func StitchSheetNames(queriesOrTables, sheetNames []string, project string, isQuery bool) []SheetWriterConfig {
+	writeConfigs := []SheetWriterConfig{}
 
 	for i, queryOrTable := range queriesOrTables {
 
-		writeConfig := ExcelWriterConfig{
+		writeConfig := SheetWriterConfig{
 			SheetName: sheetNames[i],
 			Project:   project,
 		}
@@ -100,7 +100,7 @@ func StitchSheetNames(queriesOrTables, sheetNames []string, project string, isQu
 	return writeConfigs
 }
 
-type ExcelWriterConfig struct {
+type SheetWriterConfig struct {
 	IsQuery   bool
 	Project   string
 	Query     string
@@ -108,7 +108,7 @@ type ExcelWriterConfig struct {
 	SheetName string
 }
 
-func (e ExcelWriterConfig) Execute() (*RowData, error) {
+func (e SheetWriterConfig) Execute() (*RowData, error) {
 	if e.IsQuery {
 		return GetQueryData(e.Project, e.Query)
 	}
@@ -122,7 +122,7 @@ func (e ExcelWriterConfig) Execute() (*RowData, error) {
 	return GetTableData(e.Project, *dataset, *table)
 }
 
-func WriteToExcel(project string, ss []ExcelWriterConfig, filename string) error {
+func WriteToExcel(ss []SheetWriterConfig, filename string) error {
 
 	sheets := []SheetConfig{}
 

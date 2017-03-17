@@ -3,6 +3,7 @@ package bqutils
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -12,48 +13,93 @@ import (
 	"os/user"
 	"path/filepath"
 
+	"cloud.google.com/go/bigquery"
+
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/sheets/v4"
 )
 
-func CreateSheet(name string) (*sheets.Spreadsheet, error) {
+func generateGoogleSheetRow(row []string) *sheets.RowData {
+	rowData := &sheets.RowData{
+		Values: []*sheets.CellData{},
+	}
+	for _, cell := range row {
+		rowData.Values = append(rowData.Values, &sheets.CellData{
+			UserEnteredValue: &sheets.ExtendedValue{
+				StringValue: cell,
+			},
+		})
+	}
+	return rowData
+}
+
+func CreateGoogleSheet(ss []SheetWriterConfig, name string) error {
 	client, err := sheetClient()
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	sheet := &sheets.Spreadsheet{
+	sss := []SheetConfig{}
+
+	for _, s := range ss {
+		rowData, err := s.Execute()
+
+		if err != nil {
+			return err
+		}
+
+		sss = append(sss, SheetConfig{
+			SheetName: s.SheetName,
+			Schema:    rowData.Schema,
+			Rows:      rowData.Rows,
+		})
+	}
+
+	outputSheet := &sheets.Spreadsheet{
 		Properties: &sheets.SpreadsheetProperties{
 			Title: name,
 		},
-		Sheets: []*sheets.Sheet{
-			&sheets.Sheet{
-				Properties: &sheets.SheetProperties{
-					Title: "my-sheet",
-				},
-				Data: []*sheets.GridData{
-					&sheets.GridData{
-						RowData: []*sheets.RowData{
-							&sheets.RowData{
-								Values: []*sheets.CellData{
-									&sheets.CellData{
-										//must check if string or float64, parse / cast it
-										UserEnteredValue: &sheets.ExtendedValue{
-											StringValue: "LOLOLOL",
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
+		Sheets: []*sheets.Sheet{},
 	}
 
-	return client.Spreadsheets.Create(sheet).Do()
+	for _, s := range sss {
+		sheet := &sheets.Sheet{
+			Properties: &sheets.SheetProperties{
+				Title: s.SheetName,
+			},
+			Data: []*sheets.GridData{
+				&sheets.GridData{
+					RowData: []*sheets.RowData{},
+				},
+			},
+		}
+
+		header := []string{}
+
+		for _, f := range s.Schema {
+			header = append(header, f.Name)
+		}
+
+		sheet.Data[0].RowData = append(sheet.Data[0].RowData, generateGoogleSheetRow(header))
+
+		mapper := func(row map[string]bigquery.Value, schema *bigquery.Schema) (map[string]bigquery.Value, error) {
+			if schema == nil {
+				return nil, errors.New("Schema is nil")
+			}
+			sheet.Data[0].RowData = append(sheet.Data[0].RowData, generateGoogleSheetRow(mapToStringSlice(row, *schema)))
+			return nil, nil
+		}
+
+		err = MapRows(s.Rows, &s.Schema, mapper)
+		if err != nil {
+			return err
+		}
+		outputSheet.Sheets = append(outputSheet.Sheets, sheet)
+	}
+	_, err = client.Spreadsheets.Create(outputSheet).Do()
+	return err
 }
 
 func sheetClient() (*sheets.Service, error) {
