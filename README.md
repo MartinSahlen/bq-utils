@@ -1,5 +1,5 @@
 # bq-utils
-**TLDR**: Export BigQuery tables and queries to csv or Excel sheet, supporting excel files with multiple sheets. Supports some basic CLI tasks + build your own "whatever" using the code. The CLI is just composed of the functions and components contained in the `bqutils` package.
+**TLDR**: Export BigQuery tables and queries to csv, ndjson or Excel sheet, supporting excel files with multiple sheets. Supports some basic CLI tasks + build your own "whatever" using the code. The CLI is just composed of the functions and components contained in the `bqutils` package.
 
 ## Install
 `go get github.com/MartinSahlen/bq-utils`
@@ -10,6 +10,9 @@ So, you know the feeling when the sales people ask you to "just grab some data"?
 There are however, some limitations to this. Let's say, for instance that the query result is too big to save or download. Then the query must be saved (or you can use the temporary table) and exported to a GCS bucket, after which you must download and upload it to a sheet.... You get it.
 
 What if I told you that you that there is a tool that allows you to do run a query / scan a table and dump it to your local file system. You can even run multiple queries / table scans and have them appear in different sheets in an excel file. I present: `bq-utils`, a package for working with ad-hoc biguquery data in a friendlier way.
+
+*DISCLAIMER*: Of course there are not always people nagging you for data, many times I have simple wanted to grab a set of
+data to play around with in a frontend or some other analytics tool like a graph database.
 
 ## Overview
 `bq-utils` is a CLI **as well as** a set of functions that allow you to do stuff with bigquery such as
@@ -28,7 +31,7 @@ Since we are using [docopt](https://github.com/docopt/docopt.go), I'm just pasti
 BigQuery Utilities
 
 Usage:
-bq-utils --project=<project> --csv --output=<file> (--query=<query>|--table=<table>)
+bq-utils --project=<project> (--csv|--ndjson) --output=<file> (--query=<query>|--table=<table>)
 bq-utils --project=<project> --excel --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
 
 Options:
@@ -37,6 +40,7 @@ Options:
 -q query --query=query        The query to use as input to the csv writer
 -t table --table=table        The table to use as input to the csv writer
 -c --csv                      Use CSV as output for the writer
+-n --ndjson                   Use Newline delimited JSON as output for the writer
 -e --excel                    Use Excel as the output for the writer
 -o file --output=file         The path of the output file, i.e ~/Desktop/file.csv
 -v --version                  Show version
@@ -57,6 +61,15 @@ In some cases, we might have complex queries that would be bad to write out in t
 
 `bq-utils -p my-project -o file.xlsx -c -q "$(cat query.sql)"`
 
+#### Exporting a table to NDJSON
+`bq-utils -p my-project -o file.csv -n -t dataset.table`
+
+#### Exporting a query to NDJSON
+`bq-utils -p my-project -o file.csv -n -q 'SELECT * FROM dataset.table'`
+
+#### Exporting a complex query to NDJSON
+`bq-utils -p my-project -o file.xlsx -n -q "$(cat query.sql)"`
+
 #### Exporting a table to Excel
 `bq-utils -p my-project -o file.xlsx -e -t dataset.table`
 
@@ -76,3 +89,4 @@ In some cases, we might have complex queries that would be bad to write out in t
 - Support legacy SQL
 - Support auto-detecting if you send a file for query parameter
 - Add ndjson
+- Add sending spreadsheets to a specified email if your boss wants some data TOMORROW

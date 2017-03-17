@@ -10,6 +10,16 @@ func QueryToCsv(project, query, filename string) error {
 	return WriteCsvFile(filename, queryData.Rows, queryData.Schema)
 }
 
+func QueryToNdJSON(project, query, filename string) error {
+	queryData, err := GetQueryData(project, query)
+
+	if err != nil {
+		return err
+	}
+
+	return WriteNdJSONFile(filename, queryData.Rows)
+}
+
 func TableToCsv(project, tablename, filename string) error {
 
 	dataset, table, err := ParseTableName(tablename)
