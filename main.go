@@ -10,7 +10,7 @@ func main() {
 
 Usage:
   bq-utils --project=<project> (--csv|--ndjson) --output=<file> (--query=<query>|--table=<table>)
-  bq-utils --project=<project>  --excel --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
+  bq-utils --project=<project> --excel --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
 
 Options:
   -h --help                     Show this screen
