@@ -21,6 +21,22 @@ What if I told you that you that there is a tool that allows you to do run a que
 
 ## Usage
 
-```bash
-ls -la $YOLO
+Since we are using [docopt](https://github.com/docopt/docopt.go), I'm just pasting the Usage doc for that.
+
+```
+BigQuery Utilities
+
+Usage:
+bq-utils --project=<project> --csv --output=<file> (--query=<query>|--table=<table>)
+bq-utils --project=<project> --excel --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
+
+Options:
+-h --help                     Show this screen
+-p project --project=project  The GCP project you are working with.
+-q query --query=query        The query to use as input to the csv writer
+-t table --table=table        The table to use as input to the csv writer
+-c --csv                      Use CSV as output for the writer
+-e --excel                    Use Excel as the output for the writer
+-o file --output=file         The path of the output file, i.e ~/Desktop/file.csv
+-v --version                  Show version
 ```

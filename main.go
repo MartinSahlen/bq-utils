@@ -57,11 +57,11 @@ func run(arguments map[string]interface{}) error {
 	}
 
 	if excel {
-		es := []bqutils.ExcelWriterConfig{}
+		writeConfigs := []bqutils.ExcelWriterConfig{}
 
 		//We are just putting them queries first in the sheets
 		for i, q := range queries {
-			es = append(es, bqutils.ExcelWriterConfig{
+			writeConfigs = append(writeConfigs, bqutils.ExcelWriterConfig{
 				SheetName: querySheetNames[i],
 				Query:     q,
 				IsQuery:   true,
@@ -70,14 +70,14 @@ func run(arguments map[string]interface{}) error {
 		}
 
 		for i, t := range tables {
-			es = append(es, bqutils.ExcelWriterConfig{
+			writeConfigs = append(writeConfigs, bqutils.ExcelWriterConfig{
 				SheetName: tableSheetNames[i],
 				Table:     t,
 				IsQuery:   false,
 				Project:   project,
 			})
 		}
-		return bqutils.WriteToExcel(project, es, filename)
+		return bqutils.WriteToExcel(project, writeConfigs, filename)
 	}
 	return nil
 }
