@@ -64,7 +64,7 @@ func run(arguments map[string]interface{}) error {
 	}
 
 	if ndjson && len(tables) == 1 {
-		return bqutils.QueryToNdJSON(project, tables[0], filename)
+		return bqutils.TableToNdJSON(project, tables[0], filename)
 	}
 
 	if excel {

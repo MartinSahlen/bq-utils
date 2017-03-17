@@ -1,10 +1,10 @@
 {
-    "memo": "53cc209461b066e5dcf9d1243cbd1225fe14ff44fcf77502e4ea162949043ad3",
+    "memo": "d481633900934aea5903424f1bc8853ceb72b09507bca2003be222967c318f8d",
     "projects": [
         {
             "name": "cloud.google.com/go",
             "branch": "master",
-            "revision": "081f6b13d0132656829110e5f8344a13dfe039dc",
+            "revision": "49b49ef3c9d0c5fec4438c6dda687093f6c1f8d8",
             "packages": [
                 "bigquery",
                 "civil",
@@ -12,13 +12,22 @@
                 "internal",
                 "internal/atomiccache",
                 "internal/fields",
-                "internal/optional"
+                "internal/optional",
+                "storage"
             ]
         },
         {
             "name": "github.com/MartinSahlen/workerpool",
             "branch": "master",
             "revision": "fbaebe0fb625f2175dec20ec2e5b082125af3e54",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/docopt/docopt-go",
+            "version": "0.6.2",
+            "revision": "784ddc588536785e7299f7272f39101f7faccc3f",
             "packages": [
                 "."
             ]
@@ -42,7 +51,7 @@
         {
             "name": "github.com/satori/go.uuid",
             "version": "v1.1.0",
-            "revision": "03612e14496bef24a0d0c0b912407851329b64c7",
+            "revision": "879c5887cd475cd7864858769793b2ceb0d44feb",
             "packages": [
                 "."
             ]
@@ -95,6 +104,7 @@
                 "internal",
                 "iterator",
                 "option",
+                "storage/v1",
                 "transport"
             ]
         },

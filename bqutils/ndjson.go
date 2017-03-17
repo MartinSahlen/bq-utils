@@ -8,7 +8,7 @@ import (
 
 func WriteNdJSONFile(filename string, rows *bigquery.RowIterator) error {
 
-	w, err := GetWriter(filename)
+	w, err := GetWriter(filename, "application/ndjson")
 
 	if err != nil {
 		return err
@@ -29,11 +29,32 @@ func WriteNdJSONFile(filename string, rows *bigquery.RowIterator) error {
 		return err
 	}
 
-	return w.Flush()
+	err = w.Close()
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func QueryToNdJSON(project, query, filename string) error {
 	queryData, err := GetQueryData(project, query)
+
+	if err != nil {
+		return err
+	}
+
+	return WriteNdJSONFile(filename, queryData.Rows)
+}
+
+func TableToNdJSON(project, tablename, filename string) error {
+	dataset, table, err := ParseTableName(tablename)
+
+	if err != nil {
+		return err
+	}
+
+	queryData, err := GetTableData(project, *dataset, *table)
 
 	if err != nil {
 		return err

@@ -10,7 +10,7 @@ import (
 
 func WriteCsvFile(filename string, rows *bigquery.RowIterator, schema bigquery.Schema) error {
 
-	w, err := GetWriter(filename)
+	w, err := GetWriter(filename, "text/csv")
 
 	if err != nil {
 		return err
@@ -32,13 +32,19 @@ func WriteCsvFile(filename string, rows *bigquery.RowIterator, schema bigquery.S
 		return nil, writeErr
 	}
 
-	err = MapRows(rows, &schema, mapper)
+	err = MapRows(rows, nil, mapper)
 
 	if err != nil {
 		return err
 	}
 
-	return w.Flush()
+	err = w.Close()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func TableToCsv(project, tablename, filename string) error {

@@ -17,7 +17,7 @@ func WriteExcelFile(filename string, sheets []SheetConfig) error {
 
 	excelFile := xlsx.NewFile()
 
-	w, err := GetWriter(filename)
+	w, err := GetWriter(filename, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 	if err != nil {
 		return err
@@ -52,7 +52,18 @@ func WriteExcelFile(filename string, sheets []SheetConfig) error {
 		}
 	}
 
-	return excelFile.Write(w)
+	err = excelFile.Write(w)
+
+	if err != nil {
+		return err
+	}
+
+	err = w.Close()
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func writeExcelRow(row []string, sheet *xlsx.Sheet) error {

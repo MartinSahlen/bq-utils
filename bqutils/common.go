@@ -1,10 +1,8 @@
 package bqutils
 
 import (
-	"bufio"
 	"context"
 	"fmt"
-	"os"
 	"strings"
 
 	"cloud.google.com/go/bigquery"
@@ -36,14 +34,4 @@ func mapToStringSlice(row map[string]bigquery.Value, schema bigquery.Schema) []s
 		outputRow = append(outputRow, strings.TrimSpace(fmt.Sprint(row[f.Name])))
 	}
 	return outputRow
-}
-
-func GetWriter(filename string) (*bufio.Writer, error) {
-	file, err := os.Create(filename)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return bufio.NewWriter(file), nil
 }
