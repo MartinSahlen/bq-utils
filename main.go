@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/MartinSahlen/bq-utils/bqutils"
 	"github.com/docopt/docopt-go"
 )
@@ -25,10 +27,14 @@ Options:
 
 	arguments, err := docopt.Parse(usage, nil, true, "BigQuery Utilities 0.0 Pre-Alpha", false)
 
+	sheet, err := bqutils.CreateSheet("my-shit")
+
 	if err != nil {
 		panic(err)
 	}
 
+	log.Println(*sheet)
+	return
 	err = run(arguments)
 
 	if err != nil {

@@ -1,10 +1,10 @@
 {
-    "memo": "d481633900934aea5903424f1bc8853ceb72b09507bca2003be222967c318f8d",
+    "memo": "54d3dcd4d5ff9fa566d92d5804ce2e3d4c27f54fca8bc380de25cf73bf5f8cb9",
     "projects": [
         {
             "name": "cloud.google.com/go",
             "branch": "master",
-            "revision": "49b49ef3c9d0c5fec4438c6dda687093f6c1f8d8",
+            "revision": "50a17a5c0a014a767f9f61452b50bd80ffeafb91",
             "packages": [
                 "bigquery",
                 "civil",
@@ -104,6 +104,7 @@
                 "internal",
                 "iterator",
                 "option",
+                "sheets/v4",
                 "storage/v1",
                 "transport"
             ]
