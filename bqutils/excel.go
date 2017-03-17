@@ -15,10 +15,16 @@ type SheetConfig struct {
 
 func WriteExcelFile(filename string, sheets []SheetConfig) error {
 
-	file := xlsx.NewFile()
+	excelFile := xlsx.NewFile()
+
+	w, err := GetWriter(filename)
+
+	if err != nil {
+		return err
+	}
 
 	for _, s := range sheets {
-		sheet, err := file.AddSheet(s.SheetName)
+		sheet, err := excelFile.AddSheet(s.SheetName)
 
 		if err != nil {
 			return err
@@ -45,7 +51,8 @@ func WriteExcelFile(filename string, sheets []SheetConfig) error {
 			return err
 		}
 	}
-	return file.Save(filename)
+
+	return excelFile.Write(w)
 }
 
 func writeExcelRow(row []string, sheet *xlsx.Sheet) error {

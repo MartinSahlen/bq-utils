@@ -1,24 +1,18 @@
 package bqutils
 
 import (
-	"bufio"
 	"encoding/json"
-	"os"
 
 	"cloud.google.com/go/bigquery"
 )
 
-func WriteNdJSONFile(fileName string, rows *bigquery.RowIterator) error {
+func WriteNdJSONFile(filename string, rows *bigquery.RowIterator) error {
 
-	ndJsonFile, err := os.Create(fileName)
+	w, err := GetWriter(filename)
 
 	if err != nil {
 		return err
 	}
-
-	defer ndJsonFile.Close()
-
-	w := bufio.NewWriter(ndJsonFile)
 
 	mapper := func(row map[string]bigquery.Value, schema *bigquery.Schema) (map[string]bigquery.Value, error) {
 		line, writeErr := json.Marshal(row)

@@ -1,26 +1,20 @@
 package bqutils
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	"cloud.google.com/go/bigquery"
 )
 
-func WriteCsvFile(fileName string, rows *bigquery.RowIterator, schema bigquery.Schema) error {
+func WriteCsvFile(filename string, rows *bigquery.RowIterator, schema bigquery.Schema) error {
 
-	csvFile, err := os.Create(fileName)
+	w, err := GetWriter(filename)
 
 	if err != nil {
 		return err
 	}
-
-	defer csvFile.Close()
-
-	w := bufio.NewWriter(csvFile)
 
 	header := []string{}
 
