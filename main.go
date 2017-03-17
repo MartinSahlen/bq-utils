@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/MartinSahlen/bq-utils/bqutils"
 	"github.com/docopt/docopt-go"
 )
@@ -47,17 +45,6 @@ func run(arguments map[string]interface{}) error {
 	querySheetNames := arguments["<query-sheet-name>"].([]string)
 	tables := arguments["--table"].([]string)
 	tableSheetNames := arguments["<table-sheet-name>"].([]string)
-
-	log.Println(
-		csv,
-		excel,
-		queries,
-		querySheetNames,
-		tables,
-		tableSheetNames,
-		filename,
-		project,
-	)
 
 	if csv && len(queries) == 1 {
 		return bqutils.QueryToCsv(project, queries[0], filename)
