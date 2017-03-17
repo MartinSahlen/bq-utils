@@ -68,6 +68,7 @@ func run(arguments map[string]interface{}) error {
 	}
 
 	if excel {
+		//Puttin' them queries first
 		q := bqutils.StitchSheetNames(queries, querySheetNames, project, true)
 		t := bqutils.StitchSheetNames(tables, tableSheetNames, project, false)
 		return bqutils.WriteToExcel(project, append(q, t...), filename)

@@ -74,4 +74,5 @@ When exporting to Excel, remember to include the sheet name
 - Support auto-detecting if you send a file for query parameter
 - Add sending spreadsheets to a specified email if your boss wants some data TOMORROW
 - Wrap errors to get origin of error
+- Write tests
 - DOCUMENTATION AND COMMENTS PLEASE
