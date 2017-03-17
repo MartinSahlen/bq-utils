@@ -72,7 +72,7 @@ func run(arguments map[string]interface{}) error {
 	if excel {
 		writeConfigs := []bqutils.ExcelWriterConfig{}
 
-		//We are just putting them queries first in the sheets
+		//We just be puttin' them queries first in the sheets
 		for i, q := range queries {
 			writeConfigs = append(writeConfigs, bqutils.ExcelWriterConfig{
 				SheetName: querySheetNames[i],
