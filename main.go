@@ -10,7 +10,7 @@ func main() {
 
 Usage:
   bq-utils --project=<project> (--csv|--ndjson) --output=<file> (--query=<query>|--table=<table>)
-  bq-utils --project=<project> --excel --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
+  bq-utils --project=<project>  --excel --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
 
 Options:
   -h --help                     Show this screen
@@ -21,6 +21,7 @@ Options:
 	-n --ndjson                   Use Newline delimited JSON as output for the writer
 	-e --excel                    Use Excel as the output for the writer
 	-o file --output=file         The path of the output file, i.e ~/Desktop/file.csv
+	-l --legacy										Use legacy SQL for the queries
   -v --version                  Show version`
 
 	arguments, err := docopt.Parse(usage, nil, true, "BigQuery Utilities 0.0 Pre-Alpha", false)
@@ -40,6 +41,8 @@ func run(arguments map[string]interface{}) error {
 	csv := arguments["--csv"].(bool)
 	excel := arguments["--excel"].(bool)
 	ndjson := arguments["--ndjson"].(bool)
+	//useLegacySQL := arguments["--legacysql"].(bool)
+
 	filename := arguments["--output"].(string)
 	project := arguments["--project"].(string)
 

@@ -89,8 +89,7 @@ When exporting to Excel, remember to include the sheet name
 ## Roadmap
 - Loading files from file system / GCS (maybe already supported in some bqutil tool?)
 - Exporting to Google sheets
-- Workerpool for running parallel queries and table scans, and populating excel sheet.
+- Workerpool for running parallel queries and table scans, and populating excel sheets in parallel.
 - Support legacy SQL
 - Support auto-detecting if you send a file for query parameter
-- Add ndjson
 - Add sending spreadsheets to a specified email if your boss wants some data TOMORROW
