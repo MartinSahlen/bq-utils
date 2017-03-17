@@ -46,6 +46,8 @@ func run(arguments map[string]interface{}) error {
 	tables := arguments["--table"].([]string)
 	tableSheetNames := arguments["<table-sheet-name>"].([]string)
 
+	//Docopt should make sure that the below combinations are the only legal ones.
+
 	if csv && len(queries) == 1 {
 		return bqutils.QueryToCsv(project, queries[0], filename)
 	}
