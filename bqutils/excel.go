@@ -74,14 +74,15 @@ func StitchSheetNames(queriesOrTables, sheetNames []string, project string, isQu
 
 		writeConfig := ExcelWriterConfig{
 			SheetName: sheetNames[i],
-			IsQuery:   true,
 			Project:   project,
 		}
 
 		if isQuery {
 			writeConfig.Query = queryOrTable
+			writeConfig.IsQuery = true
 		} else {
 			writeConfig.Table = queryOrTable
+			writeConfig.IsQuery = false
 		}
 		writeConfigs = append(writeConfigs, writeConfig)
 	}
@@ -96,7 +97,7 @@ type ExcelWriterConfig struct {
 	SheetName string
 }
 
-func (e ExcelWriterConfig) Exeute() (*RowData, error) {
+func (e ExcelWriterConfig) Execute() (*RowData, error) {
 	if e.IsQuery {
 		return GetQueryData(e.Project, e.Query)
 	}
@@ -115,7 +116,7 @@ func WriteToExcel(project string, ss []ExcelWriterConfig, filename string) error
 	sheets := []SheetConfig{}
 
 	for _, s := range ss {
-		rowData, err := s.Exeute()
+		rowData, err := s.Execute()
 
 		if err != nil {
 			return err
