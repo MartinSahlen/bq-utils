@@ -74,6 +74,7 @@ func CreateGoogleSheet(ss []SheetWriterConfig, name string) error {
 					//ColumnCount default is 27. 27*74074 ~= 2.000.000 which is the limit
 					//By using some metrics for rows*colums on result sets we can find
 					// if this will fail. before starting upload
+					// maybe also parse integers, floats (floats first, then int then string)
 				},
 			},
 			Data: []*sheets.GridData{
