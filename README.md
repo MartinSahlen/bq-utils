@@ -75,3 +75,4 @@ In some cases, we might have complex queries that would be bad to write out in t
 - Workerpool for running parallel queries and table scans, and populating excel sheet.
 - Support legacy SQL
 - Support auto-detecting if you send a file for query parameter
+- Add ndjson

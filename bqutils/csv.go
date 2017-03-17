@@ -34,8 +34,8 @@ func WriteCsvFile(fileName string, rows *bigquery.RowIterator, schema bigquery.S
 		if schema == nil {
 			return nil, errors.New("Schema is nil")
 		}
-		_, err := fmt.Fprintln(w, strings.Join(mapToStringSlice(row, *schema), ","))
-		return nil, err
+		_, writeErr := w.Write([]byte(strings.Join(mapToStringSlice(row, *schema), ",") + "\n"))
+		return nil, writeErr
 	}
 
 	err = MapRows(rows, &schema, mapper)
