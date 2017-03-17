@@ -12,7 +12,7 @@ func main() {
 
 Usage:
   bq-utils --project=<project> (--csv|--ndjson) --output=<file> (--query=<query>|--table=<table>)
-  bq-utils --project=<project> --excel --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
+  bq-utils --project=<project> (--excel|--google_sheet) --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
 
 Options:
   -h --help                     Show this screen
@@ -22,6 +22,7 @@ Options:
 	-c --csv                      Use CSV as output for the writer
 	-n --ndjson                   Use Newline delimited JSON as output for the writer
 	-e --excel                    Use Excel as the output for the writer
+	-g --google_sheet             Use Google sheet as the output for the writer
 	-o file --output=file         The path of the output file, i.e ~/Desktop/file.csv
   -v --version                  Show version`
 
@@ -48,6 +49,7 @@ func run(arguments map[string]interface{}) error {
 	//Docopt guarantees that this will work
 	csv := arguments["--csv"].(bool)
 	excel := arguments["--excel"].(bool)
+	googleSheet := arguments["--google_sheet"].(bool)
 	ndjson := arguments["--ndjson"].(bool)
 	filename := arguments["--output"].(string)
 	project := arguments["--project"].(string)
@@ -74,6 +76,13 @@ func run(arguments map[string]interface{}) error {
 	}
 
 	if excel {
+		//Puttin' them queries first
+		q := bqutils.StitchSheetNames(queries, querySheetNames, project, true)
+		t := bqutils.StitchSheetNames(tables, tableSheetNames, project, false)
+		return bqutils.WriteToExcel(project, append(q, t...), filename)
+	}
+
+	if googleSheet {
 		//Puttin' them queries first
 		q := bqutils.StitchSheetNames(queries, querySheetNames, project, true)
 		t := bqutils.StitchSheetNames(tables, tableSheetNames, project, false)

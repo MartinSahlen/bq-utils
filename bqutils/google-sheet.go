@@ -33,6 +33,22 @@ func CreateSheet(name string) (*sheets.Spreadsheet, error) {
 				Properties: &sheets.SheetProperties{
 					Title: "my-sheet",
 				},
+				Data: []*sheets.GridData{
+					&sheets.GridData{
+						RowData: []*sheets.RowData{
+							&sheets.RowData{
+								Values: []*sheets.CellData{
+									&sheets.CellData{
+										//must check if string or float64, parse / cast it
+										UserEnteredValue: &sheets.ExtendedValue{
+											StringValue: "LOLOLOL",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 		},
 	}
