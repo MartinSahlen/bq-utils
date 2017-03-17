@@ -5,9 +5,9 @@
 `go get github.com/MartinSahlen/bq-utils`
 
 ## Background and motivation
-So, you know the feeling when the sales people ask you to "just grab some data"? Assuming your company is using **BigQuery** for yo' data and analytics needs, this is an easy task. Just launch the web UI and do the query. You can then download it as csv / ndjson file as well as exporting it to a Google sheet.
+So, you know the feeling when the sales people ask you to "just grab some data"? Assuming your company is using **BigQuery** for yo' data and analytics needs, this is an easy task. Just launch the web UI and do the query. You can then download it as csv / ndjson file as well as exporting it to a Google sheet. Or you can use the [bq command line tool from](https://cloud.google.com/bigquery/bq-command-line-tool)
 
-There are however, some limitations to this. Let's say, for instance that the query result is too big to save or download. Then the query must be saved (or you can use the temporary table) and exported to a GCS bucket, after which you must download and upload it to a sheet.... You get it.
+There are however, some limitations to this. Let's say, for instance that the query result is too big to save or download. Then the query must be saved (or you can use the temporary table) and exported to a GCS bucket, after which you must download and upload it to a sheet.... You get it. Also, What if somebody wants an excel file with multiple sheets?
 
 What if I told you that you that there is a tool that allows you to do run a query / scan a table and dump it to your local file system. You can even run multiple queries / table scans and have them appear in different sheets in an excel file. I present: `bq-utils`, a package for working with ad-hoc biguquery data in a friendlier way.
 
@@ -25,9 +25,6 @@ data to play around with in a frontend or some other analytics tool like a graph
 - It will BLAST (probably) if the provided project is not the one you are currently authenticated against.
 
 ## Usage
-
-**NB!** In the examples, I have not included the backticks around bigquery table names because
-they ruined the markdown formatting.
 
 #### Exporting a table to CSV
 `bq-utils -p my-project -o file.csv -c -t dataset.table`
