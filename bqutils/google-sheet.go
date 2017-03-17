@@ -68,6 +68,13 @@ func CreateGoogleSheet(ss []SheetWriterConfig, name string) error {
 		sheet := &sheets.Sheet{
 			Properties: &sheets.SheetProperties{
 				Title: s.SheetName,
+				GridProperties: &sheets.GridProperties{
+					RowCount: 20000,
+					// 74074 for 1 sheet, half for two etc
+					//ColumnCount default is 27. 27*74074 ~= 2.000.000 which is the limit
+					//By using some metrics for rows*colums on result sets we can find
+					// if this will fail. before starting upload
+				},
 			},
 			Data: []*sheets.GridData{
 				&sheets.GridData{
