@@ -2,78 +2,93 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/MartinSahlen/bq-utils/bqutils"
 	"github.com/docopt/docopt-go"
 )
 
 func main() {
-	usage := `BigQuery Utilities.
+	usage := `BigQuery Utilities
 
 Usage:
-  bq-utils csv query <csv-query> <output-file>
-  bq-utils csv table <csv-table> <output-file>
-  bq-utils excel query <output-file> (<excel-query> <sheetname>)...
-  bq-utils excel table <output-file> (<excel-table> <sheetname>)...
-  bq-utils excel mixed <output-file> (q <excel-query> <query-sheetname>)|(t <excel-table> <table-sheetname>)...
+  bq-utils --project=<project> --csv --output=<file> (--query=<query>|--table=<table>)
+  bq-utils --project=<project> --excel --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
 
 Options:
-  -h --help     Show this screen.
-  --version     Show version.`
+  -h --help                     Show this screen
+  -p project --project=project  The GCP project you are working with.
+  -q query --query=query        The query to use as input to the csv writer
+  -t table --table=table        The table to use as input to the csv writer
+	-c --csv                      Use CSV as output for the writer
+	-e --excel                    Use Excel as the output for the writer
+	-o file --output=file         The path of the output file, i.e ~/Desktop/file.csv
+  -v --version                  Show version`
 
-	project := os.Getenv("PROJECT")
+	arguments, err := docopt.Parse(usage, nil, true, "BigQuery Utilities 0.0 Pre-Alpha", false)
 
-	if project == "" {
-		panic("PROJECT env var is not set")
+	if err != nil {
+		panic(err)
 	}
 
-	arguments, _ := docopt.Parse(usage, nil, true, "BigQuery Utilities 0.0 Pre-Alpha", false)
+	err = run(arguments)
 
-	log.Println(arguments)
-
-	csv := arguments["csv"].(bool)
-	excel := arguments["excel"].(bool)
-	query := arguments["query"].(bool)
-	table := arguments["table"].(bool)
-	mixed := arguments["mixed"].(bool)
-	filename := arguments["<output-file>"].(string)
-
-	if csv {
-		if query {
-			q := arguments["<csv-query>"].(string)
-			err := bqutils.QueryToCsv(project, q, filename)
-			if err != nil {
-				panic(err)
-			}
-		} else if table {
-			t := arguments["<csv-table>"].(string)
-			err := bqutils.TableToCsv(project, t, filename)
-			if err != nil {
-				panic(err)
-			}
-		}
-	} else if excel {
-		if query {
-			sheets := arguments["<sheetname>"].([]string)
-			es := []bqutils.ExcelWriterConfig{}
-			for i, q := range arguments["<excel-query>"].([]string) {
-				es = append(es, bqutils.ExcelWriterConfig{
-					SheetName: sheets[i],
-					Query:     q,
-					IsQuery:   true,
-					Project:   project,
-				})
-			}
-
-			err := bqutils.WriteToExcel(project, es, filename)
-			if err != nil {
-				panic(err)
-			}
-		} else if table {
-
-		} else if mixed {
-
-		}
+	if err != nil {
+		panic(err)
 	}
+}
+
+func run(arguments map[string]interface{}) error {
+	csv := arguments["--csv"].(bool)
+	excel := arguments["--excel"].(bool)
+	filename := arguments["--output"].(string)
+	project := arguments["--project"].(string)
+
+	queries := arguments["--query"].([]string)
+	querySheetNames := arguments["<query-sheet-name>"].([]string)
+	tables := arguments["--table"].([]string)
+	tableSheetNames := arguments["<table-sheet-name>"].([]string)
+
+	log.Println(
+		csv,
+		excel,
+		queries,
+		querySheetNames,
+		tables,
+		tableSheetNames,
+		filename,
+		project,
+	)
+
+	if csv && len(queries) == 1 {
+		return bqutils.QueryToCsv(project, queries[0], filename)
+	}
+
+	if csv && len(tables) == 1 {
+		return bqutils.TableToCsv(project, tables[0], filename)
+	}
+
+	if excel {
+		es := []bqutils.ExcelWriterConfig{}
+
+		//We are just putting them queries first in the sheets
+		for i, q := range queries {
+			es = append(es, bqutils.ExcelWriterConfig{
+				SheetName: querySheetNames[i],
+				Query:     q,
+				IsQuery:   true,
+				Project:   project,
+			})
+		}
+
+		for i, t := range tables {
+			es = append(es, bqutils.ExcelWriterConfig{
+				SheetName: tableSheetNames[i],
+				Table:     t,
+				IsQuery:   false,
+				Project:   project,
+			})
+		}
+		return bqutils.WriteToExcel(project, es, filename)
+	}
+	return nil
 }
