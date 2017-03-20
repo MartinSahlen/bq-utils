@@ -7,14 +7,14 @@ It also supports use cases such as getting data from biguqery and adding columns
 `go get github.com/MartinSahlen/bq-utils`
 
 ## Background and motivation
-So, you know the feeling when the sales people ask you to "just grab some data"? Assuming your company is using **BigQuery** for yo' data and analytics needs, this is an easy task. Just launch the web UI and do the query. You can then download it as csv / ndjson file as well as exporting it to a Google sheet. Or you can use the [bq command line tool from](https://cloud.google.com/bigquery/bq-command-line-tool)
+So, you know the feeling when the sales people ask you to "just grab some data"?  Or, many times I have simple wanted to grab a set of
+data to play around with in a frontend / visualisation or some other analytics tool like a graph database.
+
+Assuming your company is using **BigQuery** for yo' data and analytics needs, this is an easy task. Just launch the web UI and do the query. You can then download it as csv / ndjson file as well as exporting it to a Google sheet. Or you can use the [bq command line tool from](https://cloud.google.com/bigquery/bq-command-line-tool)
 
 There are however, some limitations to this. Let's say, for instance that the query result is too big to save or download. Then the query must be saved (or you can use the temporary table) and exported to a GCS bucket, after which you must download and upload it to a sheet.... You get it. Also, What if somebody wants an excel file with multiple sheets?
 
 What if I told you that you that there is a tool that allows you to do run a query / scan a table and dump it to your local file system. You can even run multiple queries / table scans and have them appear in different sheets in an excel file. I present: `bq-utils`, a package for working with ad-hoc biguquery data in a friendlier way.
-
-*DISCLAIMER*: Of course there are not always people nagging you for data, many times I have simple wanted to grab a set of
-data to play around with in a frontend or some other analytics tool like a graph database.
 
 ## Overview
 `bq-utils` is a CLI **as well as** a set of functions that allow you to do stuff with bigquery such as
