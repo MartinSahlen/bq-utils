@@ -21,8 +21,9 @@ data to play around with in a frontend or some other analytics tool like a graph
 - Write a set of tables/queries to an excel spreadsheet with a sheet per query result
 - Due to composability, most functions and features are exported. I give no guarantees to maintain compatibility, so please use a dependency manager to pin a version to make sure I don't break your builds! If this package matures I am sure there will be some conventions, semver and pull requests from the community that will stabilize the feature set.
 - Using [dep](https:///www.github.com/golang/dep) for dependency management, and ignoring vendor folder.
-- Using STANDARD SQL!
+- Using STANDARD SQL only
 - It will BLAST (probably) if the provided project is not the one you are currently authenticated against.
+- Everything (all data) runs through this computer so you might want to have a strong connection / run this in a box within google cloud.
 
 ## Usage
 
