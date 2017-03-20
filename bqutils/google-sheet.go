@@ -42,7 +42,7 @@ func calculateTotalCells(configs []SheetConfig) (int64, error) {
 		totalCells += int64(config.RowData.NumRows) * int64(len(config.RowData.Schema))
 	}
 	if totalCells > maxCells {
-		return totalCells, errors.New("The total number of cells in the ouptput will exceed the max limit of " + string(maxCells))
+		return totalCells, errors.New(fmt.Sprintf("The total number of cells (%d) in the ouptput will exceed the max limit (%d)", totalCells, maxCells))
 	}
 	return totalCells, nil
 }
@@ -78,7 +78,7 @@ func WriteToGoogleSheet(config []SheetWriterConfig, name string) error {
 			Properties: &sheets.SheetProperties{
 				Title: c.SheetName,
 				GridProperties: &sheets.GridProperties{
-					RowCount:    int64(c.RowData.NumRows),
+					RowCount:    int64(c.RowData.NumRows) + 1, //+1 for the header row
 					ColumnCount: int64(len(c.RowData.Schema)),
 				},
 			},
