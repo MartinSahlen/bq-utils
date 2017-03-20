@@ -1,6 +1,8 @@
 # bq-utils
 **TLDR**: Export BigQuery tables and queries to csv, ndjson or Excel sheet, supporting excel files with multiple sheets. Supports some basic CLI tasks + build your own "whatever" using the code. The CLI is just composed of the functions and components contained in the `bqutils` package.
 
+It also supports use cases such as getting data from biguqery and adding columns, and then uploading it to another table. This can be useful in cases where you need to perform a lookup based on some data in a table, such as adding a country code based on latitude / longitude fields.
+
 ## Install
 `go get github.com/MartinSahlen/bq-utils`
 
