@@ -1,5 +1,7 @@
 # bq-utils
-**TLDR**: Export BigQuery tables and queries to csv, ndjson, Excel sheet and Google Sheets (!), supporting excel files with multiple sheets. Supports some basic CLI tasks + build your own "whatever" using the code. The CLI is just composed of the functions and components contained in the `bqutils` package. In does some of the same things as [bq](https://cloud.google.com/bigquery/bq-command-line-tool), and some more.
+**TLDR**: Export BigQuery tables and queries to csv, ndjson, Excel and Google Sheets (!), supporting Excel/Google Sheet files with multiple sheets for a mix of full tables and ad-hoc queries.
+
+Supports some basic CLI tasks + build your own "whatever" using the code. The CLI is just composed of the functions and components contained in the `bqutils` package. In does some of the same things as [bq](https://cloud.google.com/bigquery/bq-command-line-tool), and some more.
 
 It also supports use cases such as getting data from biguqery and adding columns, and then uploading it to another table. This can be useful in cases where you need to perform a lookup based on some data in a table, such as adding a country code based on latitude / longitude fields.
 
@@ -97,21 +99,18 @@ When exporting to Excel, remember to include the sheet name
 Exporting to google sheets is a bit more work. you need to follow the guide in step 1 [here](https://developers.google.com/sheets/api/quickstart/go) and then, you need to teel bq-utils where to find the credentials by exposing it as the environment variable `CLIENT_SECRET=path-to-client-secret`. You can also run it like this `CLIENT_SECRET=path-to-client-secret bq-utils ...`
 
 When exporting to Google sheets, remember to include the sheet name
-(even though you only have one sheet)
+(even though you only have one sheet). **NB NB** if the **total** number of cells (across sheets) exceeds 2000000 (2 million), Exporting to google sheets will not work. The code tries to minimize the use of columns * rows per sheet, but this is a hard limit from Google's side. Sorry maaan!
 
-#### Exporting a table to Google sheets
+#### Exporting a table to Google Sheets
 `bq-utils -p my-project -o file -g -t dataset.table table-sheet`
 
-#### Exporting a query to Google sheets
+#### Exporting a query to Google Sheets
 `bq-utils -p my-project -o file -g -q 'SELECT * FROM dataset.table' query-sheet`
 
-#### Exporting a complex query to Google sheets
+#### Exporting a complex query to Google Sheets
 `bq-utils -p my-project -o file -g -q "$(cat query.sql)" complex-query-sheet`
 
-#### Exporting a mix of queries and tables to Excel
-
-When exporting to Google sheets, remember to include the sheet name
-(even though you only have one sheet)
+#### Exporting a mix of queries and tables to Google Sheets
 
 `bq-utils -p my-project -o file.csv -g -q "$(cat query.sql)" complex-query-sheet -q 'SELECT * FROM dataset.table' query-sheet -t dataset.table table-sheet`
 
