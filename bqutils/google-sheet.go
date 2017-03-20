@@ -20,7 +20,9 @@ import (
 	"google.golang.org/api/sheets/v4"
 )
 
-func generateGoogleSheetRow(row []string) *sheets.RowData {
+const maxCells = 2000000
+
+func writeGoogleSheetRow(row []string) *sheets.RowData {
 	rowData := &sheets.RowData{
 		Values: []*sheets.CellData{},
 	}
@@ -34,27 +36,34 @@ func generateGoogleSheetRow(row []string) *sheets.RowData {
 	return rowData
 }
 
-func CreateGoogleSheet(ss []SheetWriterConfig, name string) error {
+func calculateTotalCells(configs []SheetConfig) (int64, error) {
+	var totalCells int64
+	for _, config := range configs {
+		totalCells += int64(config.RowData.NumRows) * int64(len(config.RowData.Schema))
+	}
+	if totalCells > maxCells {
+		return totalCells, errors.New("The total number of cells in the ouptput will exceed the max limit of " + string(maxCells))
+	}
+	return totalCells, nil
+}
+
+func WriteToGoogleSheet(config []SheetWriterConfig, name string) error {
 	client, err := sheetClient()
 
 	if err != nil {
 		return err
 	}
 
-	sss := []SheetConfig{}
+	sheetConfigs, err := sheetConfigToWriterConfig(config)
 
-	for _, s := range ss {
-		rowData, err := s.Execute()
+	if err != nil {
+		return err
+	}
 
-		if err != nil {
-			return err
-		}
+	_, err = calculateTotalCells(sheetConfigs)
 
-		sss = append(sss, SheetConfig{
-			SheetName: s.SheetName,
-			Schema:    rowData.Schema,
-			Rows:      rowData.Rows,
-		})
+	if err != nil {
+		return err
 	}
 
 	outputSheet := &sheets.Spreadsheet{
@@ -64,17 +73,13 @@ func CreateGoogleSheet(ss []SheetWriterConfig, name string) error {
 		Sheets: []*sheets.Sheet{},
 	}
 
-	for _, s := range sss {
+	for _, c := range sheetConfigs {
 		sheet := &sheets.Sheet{
 			Properties: &sheets.SheetProperties{
-				Title: s.SheetName,
+				Title: c.SheetName,
 				GridProperties: &sheets.GridProperties{
-					RowCount: 20000,
-					// 74074 for 1 sheet, half for two etc
-					//ColumnCount default is 27. 27*74074 ~= 2.000.000 which is the limit
-					//By using some metrics for rows*colums on result sets we can find
-					// if this will fail. before starting upload
-					// maybe also parse integers, floats (floats first, then int then string)
+					RowCount:    int64(c.RowData.NumRows),
+					ColumnCount: int64(len(c.RowData.Schema)),
 				},
 			},
 			Data: []*sheets.GridData{
@@ -86,21 +91,21 @@ func CreateGoogleSheet(ss []SheetWriterConfig, name string) error {
 
 		header := []string{}
 
-		for _, f := range s.Schema {
+		for _, f := range c.RowData.Schema {
 			header = append(header, f.Name)
 		}
 
-		sheet.Data[0].RowData = append(sheet.Data[0].RowData, generateGoogleSheetRow(header))
+		sheet.Data[0].RowData = append(sheet.Data[0].RowData, writeGoogleSheetRow(header))
 
 		mapper := func(row map[string]bigquery.Value, schema *bigquery.Schema) (map[string]bigquery.Value, error) {
 			if schema == nil {
 				return nil, errors.New("Schema is nil")
 			}
-			sheet.Data[0].RowData = append(sheet.Data[0].RowData, generateGoogleSheetRow(mapToStringSlice(row, *schema)))
+			sheet.Data[0].RowData = append(sheet.Data[0].RowData, writeGoogleSheetRow(mapToStringSlice(row, *schema)))
 			return nil, nil
 		}
 
-		err = MapRows(s.Rows, &s.Schema, mapper)
+		err = MapRows(c.RowData.Rows, &c.RowData.Schema, mapper)
 		if err != nil {
 			return err
 		}

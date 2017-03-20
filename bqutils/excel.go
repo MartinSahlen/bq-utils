@@ -7,12 +7,6 @@ import (
 	"github.com/tealeg/xlsx"
 )
 
-type SheetConfig struct {
-	Rows      *bigquery.RowIterator
-	SheetName string
-	Schema    bigquery.Schema
-}
-
 func WriteExcelFile(filename string, sheets []SheetConfig) error {
 
 	excelFile := xlsx.NewFile()
@@ -32,7 +26,7 @@ func WriteExcelFile(filename string, sheets []SheetConfig) error {
 
 		header := []string{}
 
-		for _, f := range s.Schema {
+		for _, f := range s.RowData.Schema {
 			header = append(header, f.Name)
 		}
 
@@ -46,7 +40,7 @@ func WriteExcelFile(filename string, sheets []SheetConfig) error {
 			return nil, nil
 		}
 
-		err = MapRows(s.Rows, &s.Schema, mapper)
+		err = MapRows(s.RowData.Rows, &s.RowData.Schema, mapper)
 
 		if err != nil {
 			return err
@@ -75,39 +69,6 @@ func writeExcelRow(row []string, sheet *xlsx.Sheet) {
 	}
 }
 
-//StitchSheetNames : Since we get two arrays for queries and their corresponding sheet names,
-//We need to "stitch" them together. Docopt guarantees that this will not blast
-//Because the slices will have the same length
-func StitchSheetNames(queriesOrTables, sheetNames []string, project string, isQuery bool) []SheetWriterConfig {
-	writeConfigs := []SheetWriterConfig{}
-
-	for i, queryOrTable := range queriesOrTables {
-
-		writeConfig := SheetWriterConfig{
-			SheetName: sheetNames[i],
-			Project:   project,
-		}
-
-		if isQuery {
-			writeConfig.Query = queryOrTable
-			writeConfig.IsQuery = true
-		} else {
-			writeConfig.Table = queryOrTable
-			writeConfig.IsQuery = false
-		}
-		writeConfigs = append(writeConfigs, writeConfig)
-	}
-	return writeConfigs
-}
-
-type SheetWriterConfig struct {
-	IsQuery   bool
-	Project   string
-	Query     string
-	Table     string
-	SheetName string
-}
-
 func (e SheetWriterConfig) Execute() (*RowData, error) {
 	if e.IsQuery {
 		return GetQueryData(e.Project, e.Query)
@@ -124,20 +85,11 @@ func (e SheetWriterConfig) Execute() (*RowData, error) {
 
 func WriteToExcel(ss []SheetWriterConfig, filename string) error {
 
-	sheets := []SheetConfig{}
+	sheets, err := sheetConfigToWriterConfig(ss)
 
-	for _, s := range ss {
-		rowData, err := s.Execute()
-
-		if err != nil {
-			return err
-		}
-
-		sheets = append(sheets, SheetConfig{
-			SheetName: s.SheetName,
-			Schema:    rowData.Schema,
-			Rows:      rowData.Rows,
-		})
+	if err != nil {
+		return err
 	}
+
 	return WriteExcelFile(filename, sheets)
 }

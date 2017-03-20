@@ -80,7 +80,7 @@ func run(arguments map[string]interface{}) error {
 		//Puttin' them queries first
 		q := bqutils.StitchSheetNames(queries, querySheetNames, project, true)
 		t := bqutils.StitchSheetNames(tables, tableSheetNames, project, false)
-		return bqutils.CreateGoogleSheet(append(q, t...), filename)
+		return bqutils.WriteToGoogleSheet(append(q, t...), filename)
 	}
 	return nil
 }
