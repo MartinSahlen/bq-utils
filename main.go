@@ -21,7 +21,7 @@ Options:
 	-n --ndjson                   Use Newline delimited JSON as output for the writer
 	-e --excel                    Use Excel as the output for the writer
 	-g --google_sheet             Use Google sheet as the output for the writer
-	-o file --output=file         The path of the output file, i.e ~/Desktop/file.csv
+	-o file --output=file         The path (name) of the output file, i.e ~/Desktop/file.csv
   -v --version                  Show version`
 
 	arguments, err := docopt.Parse(usage, nil, true, "BigQuery Utilities 0.0 Pre-Alpha", false)

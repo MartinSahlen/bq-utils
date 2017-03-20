@@ -29,6 +29,31 @@ data to play around with in a frontend or some other analytics tool like a graph
 
 ## Usage
 
+### Command Overview
+
+```
+BigQuery Utilities
+
+Usage:
+bq-utils --project=<project> (--csv|--ndjson) --output=<file> (--query=<query>|--table=<table>)
+bq-utils --project=<project> (--excel|--google_sheet) --output=<file> (--query=<query> <query-sheet-name>|--table=<table> <table-sheet-name>)...
+
+Options:
+-h --help                     Show this screen
+-p project --project=project  The GCP project you are working with.
+-q query --query=query        The query to use as input to the csv writer
+-t table --table=table        The table to use as input to the csv writer
+-c --csv                      Use CSV as output for the writer
+-n --ndjson                   Use Newline delimited JSON as output for the writer
+-e --excel                    Use Excel as the output for the writer
+-g --google_sheet             Use Google sheet as the output for the writer
+-o file --output=file         The path (name) of the output file, i.e ~/Desktop/file.csv
+-v --version                  Show version`
+```
+
+
+### CSV
+
 #### Exporting a table to CSV
 `bq-utils -p my-project -o file.csv -c -t dataset.table`
 
@@ -40,6 +65,8 @@ In some cases, we might have complex queries that would be bad to write out in t
 
 `bq-utils -p my-project -o file.csv -c -q "$(cat query.sql)"`
 
+### Newline delimited json (NDJSON)
+
 #### Exporting a table to NDJSON
 `bq-utils -p my-project -o file.ndjson -n -t dataset.table`
 
@@ -49,28 +76,49 @@ In some cases, we might have complex queries that would be bad to write out in t
 #### Exporting a complex query to NDJSON
 `bq-utils -p my-project -o file.ndjson -n -q "$(cat query.sql)"`
 
-#### Exporting a table to Excel
-`bq-utils -p my-project -o file.xslx -e -t dataset.table`
-
-#### Exporting a query to Excel
-`bq-utils -p my-project -o file.xslx -e -q 'SELECT * FROM dataset.table'`
-
-#### Exporting a complex query to Excel
-`bq-utils -p my-project -o file.csv -e -q "$(cat query.sql)"`
-
-### Exporting a mix of queries and tables to Excel
-
+### Excel
 When exporting to Excel, remember to include the sheet name
 (even though you only have one sheet)
 
-`bq-utils -p my-project -o file.csv -e -q "$(cat query.sql)" complex-query-sheet -q 'SELECT * FROM dataset.table' query-sheet -t dataset.table table-1-sheet`
+#### Exporting a table to Excel
+`bq-utils -p my-project -o file.xslx -e -t dataset.table table-sheet`
+
+#### Exporting a query to Excel
+`bq-utils -p my-project -o file.xslx -e -q 'SELECT * FROM dataset.table' query-sheet`
+
+#### Exporting a complex query to Excel
+`bq-utils -p my-project -o file.csv -e -q "$(cat query.sql)" complex-query-sheet`
+
+#### Exporting a mix of queries and tables to Excel
+
+`bq-utils -p my-project -o file.csv -e -q "$(cat query.sql)" complex-query-sheet -q 'SELECT * FROM dataset.table' query-sheet -t dataset.table table-sheet`
+
+#### Exporting to google Sheets
+Exporting to google sheets is a bit more work. you need to follow the guide in step 1 [here](https://developers.google.com/sheets/api/quickstart/go) and then, you need to teel bq-utils where to find the credentials by exposing it as the environment variable `CLIENT_SECRET=path-to-client-secret`. You can also run it like this `CLIENT_SECRET=path-to-client-secret bq-utils ...`
+
+When exporting to Google sheets, remember to include the sheet name
+(even though you only have one sheet)
+
+#### Exporting a table to Google sheets
+`bq-utils -p my-project -o file -g -t dataset.table table-sheet`
+
+#### Exporting a query to Google sheets
+`bq-utils -p my-project -o file -g -q 'SELECT * FROM dataset.table' query-sheet`
+
+#### Exporting a complex query to Google sheets
+`bq-utils -p my-project -o file -g -q "$(cat query.sql)" complex-query-sheet`
+
+#### Exporting a mix of queries and tables to Excel
+
+When exporting to Google sheets, remember to include the sheet name
+(even though you only have one sheet)
+
+`bq-utils -p my-project -o file.csv -g -q "$(cat query.sql)" complex-query-sheet -q 'SELECT * FROM dataset.table' query-sheet -t dataset.table table-sheet`
 
 ## Roadmap
-- Loading files from file system / GCS (maybe already supported in some bqutil tool?)
-- Exporting to Google sheets
 - Workerpool for running parallel queries and table scans, and populating excel sheets in parallel.
 - Support legacy SQL
-- Support auto-detecting if you send a file for query parameter
+- Auto-detecting if you send a file for query parameter
 - Add sending spreadsheets to a specified email if your boss wants some data TOMORROW
 - Wrap errors to get origin of error
 - Write tests
